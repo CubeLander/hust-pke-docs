@@ -1,7 +1,15 @@
 # lab1_challenge2 打印异常代码行
 
 ## 引用
+[lab1_challenge1 打印用户程序调用栈](lab/lab1_challenge1.md)
+
 [ELF文件如何组织调试信息](../doc/ELF文件如何组织调试信息.md)
+
+[make_addr_line源代码分析](../code/make_addr_line.md)
+
+[硬中断的响应过程](../doc/硬件对硬中断的响应过程.md)
+
+[硬中断处理程序](../code/硬中断处理程序.md)
 
 ## 实验目标
 修改内核（包括machine文件夹下）的代码，使得用户程序在发生异常时，内核能够输出触发异常的用户程序的源文件名和对应代码行。
@@ -29,6 +37,7 @@ System is shutting down with exit code -1.
 
 ## 主要内容
 lab1_challenge2的分支变化
+
 打印异常代码行的原理
 
 ## lab1_challenge2的分支变化
@@ -104,19 +113,27 @@ typedef struct process_t {
 
 ### elf文件中的调试信息是怎么组织的
 [ELF文件如何组织调试信息](../doc/ELF文件如何组织调试信息.md)
+
 在 ELF 文件中，调试信息通过 `.debug_*` 节段（如 `.debug_info`、`.debug_abbrev`、`.debug_line` 等）来组织和存储。DWARF 格式被广泛使用来表示这些信息，帮助调试器将二进制代码映射回源代码。调试信息包含了源代码的行号、符号表、变量和类型信息，但**不包含源代码的实际文本**。这些信息帮助开发者在调试时查看源代码的变量值、函数调用栈、代码行等。
 
 具体二进制组织方式，见函数`make_addr_line`中的解析过程。
 
 ## 实现
+### 读取.debug_line ELF节
+[lab1_challenge1 打印用户程序调用栈](lab/lab1_challenge1.md)
+
+在读取调试信息的过程中加入对`.debug_line` ELF节的解析过程。
+解析ELF信息的方法，见`lab1_challenge1`
 
 ### 重新组织make_addr_line的代码
-见[make_addr_line](../code/make_addr_line.md)
+见 [make_addr_line源代码分析](../code/make_addr_line.md)
+
+由于作者水平有限，函数原变量名和内部结构很难看懂，于是重新做了一番研究。
 ### 全局数据结构
-在elf.c中声明了全局debugline缓冲区，和debugline的section header.
+在`elf.c`中声明了全局debugline缓冲区，从中分配`dir`表、`file`表和`line`表.
 ### 从epc到代码行的解析过程
 在mtrap.c中新建一个硬中断服务程序error_printer，读取process中存放的文件名表dir，文件表file和行表line成员变量，进行epc到代码行的定位过程。
 
-查找行表（递增），从而根据映射关系定位dir和file中的index。
+查找行表（递增），从而根据映射关系定位目标文件路径在`dir`表和`file`表中的序号，从而还原源文件的路径。
 
-根据存放的路径重新打开文件，并且通过读取换行符\n定位行。
+根据存放的路径重新打开文件，通过读取换行符\n定位目标行的代码文本。

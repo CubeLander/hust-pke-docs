@@ -4,6 +4,9 @@
 
 [spike仿真层](../doc/Spike仿真层.md)
 
+## lab2开始时对于内核源代码的改动一览
+[lab2源代码改动分析](../code/lab2_update.md)
+
 ## spike仿真层
 
 [spike仿真层](../doc/Spike仿真层.md)

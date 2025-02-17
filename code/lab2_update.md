@@ -518,7 +518,7 @@ sprint("kernel page table is on \n");
 
 ---
 
-### `process.c`
+## `process.c`
 ### **进程切换到用户态的改进**
 ![alt text](../images/lab2/process_c1.png)
 
@@ -1051,7 +1051,6 @@ sprint(pa);
 
 ```
 ## pmm.c
-### **物理内存管理（pmm.c）的主要功能**
 
 `pmm.c` 负责 **管理物理内存分配和回收**，它实现了一个 **基于链表的物理页分配器**，用于给内核和用户进程分配 **4KB 页大小的物理内存**。其核心功能如下：
 
@@ -1160,7 +1159,6 @@ void free_page(void* pa);
 #endif
 ```
 ## vmm.c
-### **虚拟内存管理（vmm.c）的主要功能**
 
 `vmm.c` 负责 **RISC-V SV39 分页模式下的虚拟地址管理**，它提供了 **内核页表和用户页表的映射、地址转换和页表遍历**。其主要功能包括：
 
@@ -1375,5 +1373,5 @@ void user_vm_map(pagetable_t page_dir, uint64 va, uint64 size, uint64 pa, int pe
 
 ```
 
-### 删除user.lds
+## 删除user.lds
 不需要手动在裸机模式下直接分配段位置了。

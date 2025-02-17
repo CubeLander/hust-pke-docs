@@ -49,3 +49,4 @@
 
 [lab1_challenge1 打印用户程序调用栈](lab/lab1_challenge1.md)
 
+[lab1_challenge2 打印异常代码行](lab/lab1_challenge2.md)

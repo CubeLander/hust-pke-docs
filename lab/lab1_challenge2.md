@@ -119,6 +119,7 @@ typedef struct process_t {
 具体二进制组织方式，见函数`make_addr_line`中的解析过程。
 
 ## 实现
+实现的具体方法，可以参考网上的公开资料。
 ### 读取.debug_line ELF节
 [lab1_challenge1 打印用户程序调用栈](lab/lab1_challenge1.md)
 

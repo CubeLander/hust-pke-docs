@@ -28,11 +28,16 @@
 
 
 ## 四、环境搭建（Docker+vscode）
-**调试好上手即用的x64 ubuntu 24.04 LTS镜像**：
+### 调试好上手即用的x64 ubuntu 24.04 LTS镜像
 ```
   docker pull crpi-x7y7w4q8rsfacqq9.cn-shanghai.personal.cr.aliyuncs.com/cubelander-images/x86-pke:latest
 ```
 [配置过程](lab/环境配置.md)
+
+### 调试工具的安装和使用
+
+[调试工具安装配置过程](lab/调试工具.md)
+
 
 ## 五、实验过程
 

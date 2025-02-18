@@ -52,3 +52,7 @@
 [lab1_challenge2 打印异常代码行](lab/lab1_challenge2.md)
 
 [lab2 内存管理基础知识](lab/lab2.md)
+
+[lab2_1 虚实地址转换](lab/lab2_1.md)
+
+[lab2_2 简单内存分配](lab/lab2_2.md)

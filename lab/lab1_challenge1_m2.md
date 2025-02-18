@@ -1,0 +1,4 @@
+# lab1_challenge1对lab2中的MMU支持
+
+## 问题概述
+因为lab1_challenge1在backtrace系统调用中需要访问用户的栈空间，所以需要在内核对于用户的栈指针虚拟地址做翻译。

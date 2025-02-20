@@ -39,7 +39,7 @@
 [调试工具安装配置过程](lab/调试工具.md)
 
 
-## 五、实验内容
+## 五、实验内容(按完成顺序)
 
 [lab1_1 系统调用](lab/lab1_1.md)
 
@@ -56,3 +56,9 @@
 [lab2_1 虚实地址转换](lab/lab2_1.md)
 
 [lab2_2 简单内存分配](lab/lab2_2.md)
+
+[lab2_3 缺页异常](lab/lab2_2.md)
+
+[lab1_challenge1对于MMU的支持](lab/lab1_challenge1_m2.md)
+
+[lab2_challenge1 复杂缺页异常](lab/lab2_challenge1.md)

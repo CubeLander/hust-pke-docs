@@ -109,4 +109,7 @@ static void *elf_alloc_mb(elf_ctx *ctx, uint64 elf_pa, uint64 elf_va, uint64 siz
 ```
 
 - pmm_init()
+## kern_vm_init
+
+
 - kern_vm_init()

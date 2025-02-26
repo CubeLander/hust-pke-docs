@@ -42,7 +42,9 @@
 [调试工具安装配置过程](lab/调试工具.md)
 
 
-## 五、实验内容(按完成顺序)
+## 五、实验内容
+
+### lab1
 
 [lab1_1 系统调用](lab/lab1_1.md)
 
@@ -57,6 +59,8 @@
 
 [lab1_challenge3 多核启动和运行](lab/lab1_challenge3.md)
 
+### lab2
+
 [lab2 内存管理基础知识](lab/lab2.md)
 
 [lab2_1 虚实地址转换](lab/lab2_1.md)
@@ -65,10 +69,35 @@
 
 [lab2_3 缺页异常](lab/lab2_2.md)
 
-
-
 [lab2_challenge1 复杂缺页异常](lab/lab2_challenge1.md)
 
+[lab2_challenge2 堆空间管理](lab/lab2_challenge2.md)
+
+[lab2_challenge3 多核内存管理](lab/lab2_challenge3.md)
+
+
+### lab3
+[lab3 进程调度基础知识](lab/lab3.md)
+
+[lab3_1 fork](lab/lab3_1.md)
+
+[lab3_2 yield](lab/lab3_2.md)
+
+[lab3_3 循环轮转调度](lab/lab3_3.md)
+
+[lab3_challenge1 进程等待和数据段复制](lab/lab3_challenge1.md)
+
+[lab3_challenge2 实现信号量](lab/lab3_challenge2.md)
+
+[lab3_challenge3 写时复制](lab/lab3_challenge3.md)
+
+### lab4
+
+[lab4 文件系统基础知识](lab/lab4.md)
+
+[lab4_1 相对路径](lab/lab4_1.md)
+
+[lab4_2 目录文件](lab/lab4_2.md)
 
 ## 六、文档作者的一些碎碎念
 

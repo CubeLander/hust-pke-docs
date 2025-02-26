@@ -4,6 +4,13 @@
 完善对目录文件的操作
 
 ## 新特性
+
+### 新增数据结构struct dir
+这个struct dir是遍历目录过程中的目录项，用来从系统传回遍历结果。
+dir_fd对应struct file中的offset由系统维护，在整个遍历过程中自增，用来决定在struct dir中传回的目录项index。在遍历完目录以后offset不会重置，而是直接释放这个目录句柄。
+等待下一次遍历的时候，再临时创建目录文件。
+
+### 新增用户接口
 增加了对目录的打开和关闭，以及创建和读取用户接口：
 ```c
 // added @lab4_2
@@ -20,7 +27,16 @@
 // -> viop_hook_opendir -> rfs_hook_opendir
 //		预加载目录数据到内存
 #define SYS_user_readdir  (SYS_user_base + 25)
-// sys_user_readdir -> do_readdir -> vfs_readdir -> viop_readdir -> rfs_readdir
+// -> sys_user_readdir()
+//		系统调用接口，从目录名得到文件描述符file descriptor
+// -> do_readdir 
+//		从fd获取struct file *pfile
+//		调用vfs_readdir(*pfile,*dir)
+// -> vfs_readdir 
+//		解析pfile，拿到dentry，并解析出inode
+//		调用文件系统接口，执行目录解析动作
+// -> viop_readdir -> rfs_readdir
+//		将目录内容解析到dir数据结构中
 #define SYS_user_mkdir    (SYS_user_base + 26)
 // sys_user_mkdir -> do_mkdir -> vfs_mkdir -> viop_mkdir -> rfs_mkdir
 #define SYS_user_closedir (SYS_user_base + 27)
@@ -49,3 +65,10 @@ const struct vinode_ops rfs_i_ops = {
 };
 
 ```
+
+## 实验目标
+补充rfs_readdir下的代码。
+
+我们需要知道目录inode是如何保存目录项的。
+
+在rfs_create中，创建完文件以后，会把这个文件的inum(在文件系统中的唯一标识符)和name传递给parent，调用rfs_add_direntry进行目录的登记。

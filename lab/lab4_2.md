@@ -42,16 +42,21 @@ dir_fd对应struct file中的offset由系统维护，在整个遍历过程中自
 //		系统调用接口
 // -> do_mkdir 
 //		调用vfs_mkdir(*pfile,*dir)
-// -> vfs_readdir 
-//		解析pfile，拿到dentry，并解析出inode
-//		调用文件系统接口，执行目录解析动作
-// -> viop_readdir -> rfs_readdir
-//		将目录内容解析到dir数据结构中
+// -> vfs_mkdir 
+//		首先解析目录字符串，得到父目录项struct dentry *parent
+//		alloc_vfs_dentry创建新目录项dentry
+//		通过父目录项的方法创建子目录项viop_mkdir(parent->dentry_inode, new_dentry);
+// -> viop_mkdir -> rfs_mkdir
+//		创建实际的rfs_dinode文件元信息
+// 		调用 rfs_update_vinode 映射到 vfs 中的 vinode 
 #define SYS_user_closedir (SYS_user_base + 27)
 // sys_user_closedir -> do_closedir -> vfs_closedir -> viop_hook_closedir -> rfs_hook_closedir
 ```
 [rfs_hook_opendir](../code/file_system/rfs_hook_opendir.md)
+
 [vfs_mkdir](../code/file_system/vfs_mkdir.md)
+
+[rfs_mkdir](../code/file_system/rfs_mkdir.md)
 
 相应的，在ramfs中也增加了对应的方法：
 ```c

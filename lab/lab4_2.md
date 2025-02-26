@@ -16,8 +16,9 @@
 //		封装成文件句柄file descriptor给用户
 // -> vfs_opendir 
 //		调用lookup_final_dentry()，拿到dentry
-// -> viop_hook_opendir
-// -> rfs_hook_opendir
+//		然后把dentry封装成file，传给上层。
+// -> viop_hook_opendir -> rfs_hook_opendir
+//		预加载目录数据到内存
 #define SYS_user_readdir  (SYS_user_base + 25)
 // sys_user_readdir -> do_readdir -> vfs_readdir -> viop_readdir -> rfs_readdir
 #define SYS_user_mkdir    (SYS_user_base + 26)
@@ -25,6 +26,7 @@
 #define SYS_user_closedir (SYS_user_base + 27)
 // sys_user_closedir -> do_closedir -> vfs_closedir -> viop_hook_closedir -> rfs_hook_closedir
 ```
+[rfs_hook_opendir](../code/file_system/rfs_hook_opendir.md)
 
 相应的，在ramfs中也增加了对应的方法：
 ```c

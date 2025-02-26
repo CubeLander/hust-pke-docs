@@ -18,11 +18,9 @@
 ## vinode VFS中的文件项
 - vinode 是对对具体文件系统中的inode做的抽象
 - 包含操作系统操作一个文件（或目录）所需要的全部信息
-- 在文件打开时创建
-- 在不被任何dentry引用时释放
-- 存储在全局表vinode_hash_table中，用来避免同一个文件被并发打开
-
-对文件的各种操作也可以视为vinode的"方法"
+- 虽然说在ramfs里的vinode都是临时创建的，但是对于实际外存来说，vinode是持久保存在磁盘中的
+- 在内核的全局表vinode_hash_table中做临时存储，起到避免文件同时打开，和提高IO效率的目的。
+- 对文件的各种操作也可以视为vinode的"类方法"。类方法的具体实现取决于下层的文件系统，struct vinode_ops中的虚函数是实现了文件系统的“公有接口”。
 
 ```c
 // abstract vfs inode
@@ -91,7 +89,7 @@ struct file {
 
 
 
-## vfs文件系统S
+## vfs文件系统
 
 ### VFS概述
 - PKE需要同时支持两类文件系统：

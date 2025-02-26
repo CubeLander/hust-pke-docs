@@ -52,7 +52,10 @@
 
 [lab1_challenge1 打印用户程序调用栈](lab/lab1_challenge1.md)
 
+
 [lab1_challenge2 打印异常代码行](lab/lab1_challenge2.md)
+
+[lab1_challenge3 多核启动和运行](lab/lab1_challenge3.md)
 
 [lab2 内存管理基础知识](lab/lab2.md)
 
@@ -62,7 +65,7 @@
 
 [lab2_3 缺页异常](lab/lab2_2.md)
 
-[lab1_challenge1对于MMU的支持](lab/lab1_challenge1_m2.md)
+
 
 [lab2_challenge1 复杂缺页异常](lab/lab2_challenge1.md)
 

@@ -38,11 +38,20 @@ dir_fd对应struct file中的offset由系统维护，在整个遍历过程中自
 // -> viop_readdir -> rfs_readdir
 //		将目录内容解析到dir数据结构中
 #define SYS_user_mkdir    (SYS_user_base + 26)
-// sys_user_mkdir -> do_mkdir -> vfs_mkdir -> viop_mkdir -> rfs_mkdir
+// -> sys_user_mkdir()
+//		系统调用接口
+// -> do_mkdir 
+//		调用vfs_mkdir(*pfile,*dir)
+// -> vfs_readdir 
+//		解析pfile，拿到dentry，并解析出inode
+//		调用文件系统接口，执行目录解析动作
+// -> viop_readdir -> rfs_readdir
+//		将目录内容解析到dir数据结构中
 #define SYS_user_closedir (SYS_user_base + 27)
 // sys_user_closedir -> do_closedir -> vfs_closedir -> viop_hook_closedir -> rfs_hook_closedir
 ```
 [rfs_hook_opendir](../code/file_system/rfs_hook_opendir.md)
+[vfs_mkdir](../code/file_system/vfs_mkdir.md)
 
 相应的，在ramfs中也增加了对应的方法：
 ```c
@@ -72,3 +81,45 @@ const struct vinode_ops rfs_i_ops = {
 我们需要知道目录inode是如何保存目录项的。
 
 在rfs_create中，创建完文件以后，会把这个文件的inum(在文件系统中的唯一标识符)和name传递给parent，调用rfs_add_direntry进行目录的登记。
+```c
+//
+// add a new directory entry to a directory
+//
+int rfs_add_direntry(struct vinode *dir, const char *name, int inum) {
+  if (dir->type != DIR_I) {
+    sprint("rfs_add_direntry: not a directory!\n");
+    return -1;
+  }
+
+  struct rfs_device *rdev = rfs_device_list[dir->sb->s_dev->dev_id];
+  int n_block = dir->addrs[dir->size / RFS_BLKSIZE];
+  if (rfs_r1block(rdev, n_block) != 0) {
+    sprint("rfs_add_direntry: failed to read block %d!\n", n_block);
+    return -1;
+  }
+
+  // prepare iobuffer
+  char *addr = (char *)rdev->iobuffer + dir->size % RFS_BLKSIZE;
+  struct rfs_direntry *p_direntry = (struct rfs_direntry *)addr;
+  p_direntry->inum = inum;
+  strcpy(p_direntry->name, name);
+
+  // write the modified (parent) directory block back to disk
+  if (rfs_w1block(rdev, n_block) != 0) {
+    sprint("rfs_add_direntry: failed to write block %d!\n", n_block);
+    return -1;
+  }
+
+  // update its parent dir state
+  dir->size += sizeof(struct rfs_direntry);
+
+  // write the parent dir inode back to disk
+  if (rfs_write_back_vinode(dir) != 0) {
+    sprint("rfs_add_direntry: failed to write back parent dir inode!\n");
+    return -1;
+  }
+
+  return 0;
+}
+
+```

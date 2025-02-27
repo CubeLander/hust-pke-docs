@@ -5,24 +5,29 @@
 
 [文件系统使用dentry和vinode的设计范式(Deepseek)](../doc/文件系统设计范式.md)
 
+[vinode与rfs_inode协作的设计模式(Deepseek)](../doc/vinode与rfs_inode的设计模式.md)
+
+## 对源代码的优化
+rfs_r1block和rfs_w1block形式上都是rfs私有方法，所以说可以在rfs.c中做静态声明。同时添加了静态函数`static struct rfs_dinode*  rfs_alloc_dinode(struct rfs_device * rdev, int* inum);`
+
+
+
 ## 新建的对象和数据结构
 
-## hash_table 哈希表对象
+### hash_table 哈希表对象
 
 在util中，新增了哈希表的声明和方法：hash_table.c, hash_table.h
 事实上这个“哈希表”的名字并不准确，它的实现其实是一个用key作为关键字的唯一集合，内部数据结构是链表。
 
-这个hash_table的特点是，可以体现c++的原始多态特性，自定义对象，和比较函数。
+这个hash_table的特点是，体现c++的原始多态特性，能够自定义保存对象和比较函数。
 
+### vinode VFS中的文件项
 
-
-
-## vinode VFS中的文件项
-- vinode 是对对具体文件系统中的inode做的抽象
-- 包含操作系统操作一个文件（或目录）所需要的全部信息
-- 虽然说在ramfs里的vinode都是临时创建的，但是对于实际外存来说，vinode是持久保存在磁盘中的
-- 在内核的全局表vinode_hash_table中做临时存储，起到避免文件同时打开，和提高IO效率的目的。
-- 对文件的各种操作也可以视为vinode的"类方法"。类方法的具体实现取决于下层的文件系统，struct vinode_ops中的虚函数是实现了文件系统的“公有接口”。
+- 以`rfs`文件系统为例，`vinode`是基于`rfs_dinode`创建的。
+- `dinode`是文件元信息在存储设备中的持久存储。
+- `vinode`是`dinode`文件元信息的缓存，也是系统-->`vfs`-->`rfs`实际操作文件的接口。
+- 从`dinode`写到`vinode`的过程，只在文件创建和打开时进行。
+- 从`vinode`写回`dinode`的过程`rfs_write_dinode`，只在文件创建和写回时进行。
 
 ```c
 // abstract vfs inode
@@ -47,7 +52,7 @@ struct vinode {
 
 ```
 
-## dentry VFS中的目录项
+### dentry VFS中的目录项
 - 一个dentry对应一个vinode
 - 由于硬链接的存在，一个vinode可能同时被多个dentry引用
 - 对于普通文件和目录文件，都用dentry管理
@@ -64,7 +69,7 @@ struct dentry {
 };
 ```
 
-## proc_file_management 维护进程打开的所有文件
+### proc_file_management 维护进程打开的所有文件
 - 属于进程控制块的成员变量。
 - 记录进程的pwd，和所有打开的文件
 ```c
@@ -76,7 +81,7 @@ typedef struct proc_file_management_t {
 } proc_file_management;
 ```
 
-## struct file 打开的文件的控制块
+### struct file 打开的文件的控制块
 ```c
 // data structure of an openned file
 struct file {
@@ -88,6 +93,8 @@ struct file {
 };
 
 ```
+
+### rfs_device 实际存储设备
 
 
 

@@ -75,17 +75,63 @@ const struct vinode_ops rfs_i_ops = {
     .viop_write_back_vinode = rfs_write_back_vinode,
 
     .viop_hook_opendir = rfs_hook_opendir, 		// 新增
+	// 提前把文件硬盘块中的目录项读进内存
     .viop_hook_closedir = rfs_hook_closedir,	// 新增
+	
 };
 
 ```
 
 ## 实验目标
-补充rfs_readdir下的代码。
+补充rfs_readdir下的代码，从打开目录时，执行`rfs_hook_opendir`创建的`dir_cache`中，读出目录项信息，并通过`struct dir*`传回给用户
 
-我们需要知道目录inode是如何保存目录项的。
 
-在rfs_create中，创建完文件以后，会把这个文件的inum(在文件系统中的唯一标识符)和name传递给parent，调用rfs_add_direntry进行目录的登记。
+
+
+## 参考代码
+
+### rfs_hook_opendir
+```c
+//
+// when a directory is opened, the contents of the directory file are read
+// into the memory for directory read operations
+//
+int rfs_hook_opendir(struct vinode *dir_vinode, struct dentry *dentry) {
+  // allocate space and read the contents of the dir block into memory
+  void *pdire = NULL;
+  void *previous = NULL;
+  struct rfs_device *rdev = rfs_device_list[dir_vinode->sb->s_dev->dev_id];
+
+  // read-in the directory file, store all direntries in dir cache.
+  for (int i = dir_vinode->blocks - 1; i >= 0; i--) {
+    previous = pdire;
+    pdire = alloc_page();
+
+    if (previous != NULL && previous - pdire != RFS_BLKSIZE)
+      panic("rfs_hook_opendir: memory discontinuity");
+
+    rfs_r1block(rdev, dir_vinode->addrs[i]);
+    memcpy(pdire, rdev->iobuffer, RFS_BLKSIZE);
+  }
+
+  // save the pointer to the directory block in the vinode
+  struct rfs_dir_cache *dir_cache = (struct rfs_dir_cache *)alloc_page();
+  dir_cache->block_count = dir_vinode->blocks;
+  dir_cache->dir_base_addr = (struct rfs_direntry *)pdire;
+
+  dir_vinode->i_fs_info = dir_cache;
+
+  return 0;
+}
+
+```
+
+### rfs_mkdir
+```c
+
+```
+
+### rfs_add_direntry
 ```c
 //
 // add a new directory entry to a directory
@@ -95,23 +141,26 @@ int rfs_add_direntry(struct vinode *dir, const char *name, int inum) {
     sprint("rfs_add_direntry: not a directory!\n");
     return -1;
   }
+	// 直接将子文件目录项的磁盘号附加到目录的数据块后面
+	// 这个代码没有考虑到一个目录可以有多个目录块
+  int block_index = dir->addrs[dir->size / RFS_BLKSIZE];
+	uint64 offset = dir->size % RFS_BLKSIZE;
 
   struct rfs_device *rdev = rfs_device_list[dir->sb->s_dev->dev_id];
-  int n_block = dir->addrs[dir->size / RFS_BLKSIZE];
-  if (rfs_r1block(rdev, n_block) != 0) {
-    sprint("rfs_add_direntry: failed to read block %d!\n", n_block);
+
+	// 读取实际磁盘块装入缓存，并写入内容
+  if (rfs_r1block(rdev, block_index) != 0) {
+    sprint("rfs_add_direntry: failed to read block %d!\n", block_index);
     return -1;
   }
 
-  // prepare iobuffer
-  char *addr = (char *)rdev->iobuffer + dir->size % RFS_BLKSIZE;
-  struct rfs_direntry *p_direntry = (struct rfs_direntry *)addr;
+  struct rfs_direntry *p_direntry = (struct rfs_direntry *)((uint64)rdev->iobuffer + offset);
   p_direntry->inum = inum;
   strcpy(p_direntry->name, name);
 
   // write the modified (parent) directory block back to disk
-  if (rfs_w1block(rdev, n_block) != 0) {
-    sprint("rfs_add_direntry: failed to write block %d!\n", n_block);
+  if (rfs_w1block(rdev, block_index) != 0) {
+    sprint("rfs_add_direntry: failed to write block %d!\n", block_index);
     return -1;
   }
 

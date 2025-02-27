@@ -1,36 +1,29 @@
 # 华中科技大学 操作系统实验文档
-## 一、 前言
 
-本文档旨在继承和发扬开源精神，借助社区智慧，通过一系列实践探索为开源事业贡献微薄之力，希望能够为后续的研究与开发提供参考与借鉴。
+## 一、前言
 
-需要特别说明的是，文档中部分内容由 ChatGPT/Deepseek 自动生成，尚未经过充分推敲和严格验证，可能存在不准确或不完善之处。对此，敬请读者谅解，并欢迎大家提出宝贵意见，共同改进和完善。
+本文档旨在记录我在完成 [华中科技大学 操作系统课程设计（Gitee）](https://gitee.com/hustos/pke-doc/tree/master)，基于 [课程源代码仓库(Github)](https://github.com/MrShawCode/riscv-pke) 学习时，所遇到的困难及其解决方案，特别是在开发基于RISC-V代理内核（Proxy Kernel）的操作系统过程中积累的具体经验。文档内容不仅包括对原文档的补充，还针对具体问题提供了详细的解决方案，旨在为后续同学的学习提供帮助和参考。
 
-文档中使用vscode的搜索和c语言扩展功能，从而实现源代码中对关键字的准确查找。因为篇幅有限，故在引用函数和汇编符号时均省略目录和文件位置，希望读者自行搜索和确认。
+开源精神是本项目的核心，借助社区智慧和实践探索，希望能为开源事业贡献微薄之力。文档中的参考资料由ChatGPT/Deepseek自动基于网上现有的资源整合生成，经过作者审阅编写，其中可能存在不准确或不完善之处，欢迎读者提出宝贵意见，改进这个项目。
 
 
 
 
 ## 二、实验概述
 
-[实验概述](lab/实验概述.md)
+
+本课程项目旨在基于 [RISC-V 工具链](https://github.com/riscv-collab/riscv-gnu-toolchain) 设计并实现一个代理内核（Proxy Kernel，PKE）操作系统（相当于虚拟机），旨在通过一系列实验任务，帮助学生深入理解操作系统原理及其与硬件的协同工作。通过实现一个简化的代理内核，学生将聚焦于操作系统核心功能的实现，如内存管理、进程调度和中断处理，避免过多的硬件相关问题，从而集中精力掌握系统的核心概念和技术。
+
+本实验采用的代理内核架构，区别于传统的宏内核和微内核，重点在于通过简化的设计满足给定应用的需求，系统规模随着应用需求的变化而变化。这种方法不仅极大降低了实验的复杂性，也保留了操作系统设计的完整性，既能管理处理器和内存，又能通过与主机的通信来完成硬件功能，从而为后续的软硬协同设计打下基础。
+
+在完成操作系统部分的实验后，系统能力培养部分将引导学生在 FPGA 开发板上部署 RISC-V 软核，并扩展代理内核以实现设备管理和文件访问等更复杂功能。整个实验流程循序渐进，从基础实验到挑战实验，旨在帮助学生深入理解操作系统和计算机系统的整体架构，并为开发和验证现代计算机系统提供实践经验。
+
+[原实验概述](doc/实验概述.md)
 
 
-## 三、参考资料
-
-[riscv-software-src/riscv-pk: RISC-V Proxy Kernel](https://github.com/riscv-software-src/riscv-pk.git)
-
-[MrShawCode/riscv-pke: RISC-V Proxy Kernel for Education](https://github.com/MrShawCode/riscv-pke)
-
-[华中科技大学操作系统实验（riscv-pke）文档 - Gitee.com](https://gitee.com/hustos/pke-doc/tree/master)
-
-[riscv-collab/riscv-gnu-toolchain](https://github.com/riscv-collab/riscv-gnu-toolchain)
-
-[riscv-software-src/riscv-isa-sim](https://github.com/riscv-software-src/riscv-isa-sim)
-
-[百度网盘下载：riscv-gnu-toolchain](https://pan.baidu.com/s/1Z9xKV_UY2Li_SxYrbJT5Zw?pwd=cpbf)
 
 
-## 四、环境搭建（Docker+vscode）
+## 三、环境搭建（Docker+vscode）
 ### 调试好上手即用的x64 ubuntu 24.04 LTS镜像
 ```
   docker pull crpi-x7y7w4q8rsfacqq9.cn-shanghai.personal.cr.aliyuncs.com/cubelander-images/x86-pke:latest
@@ -42,7 +35,7 @@
 [调试工具安装配置过程](lab/调试工具.md)
 
 
-## 五、实验内容
+## 四、实验内容
 
 ### lab1
 
@@ -99,8 +92,8 @@
 
 [lab4_2 目录文件](lab/lab4_2.md)
 
-## 六、文档作者的一些碎碎念
+## 五、附录
 
-在操作系统开发的过程中，作者逐渐意识到，尽管C语言本身并不直接提供类和对象的语法支持，但通过合理的编程思想，依然可以借助面向对象的设计原则来组织代码。例如，可以将全局结构体（如进程控制块、内存管理单元（MMU）等）视为“类”的实例，借助结构体的封装特性，模拟对象的属性和行为。作者发现，这种方法不仅提升了代码的模块化、可扩展性，还使得复杂的操作系统组件更加易于管理和维护。这种思维方式的转变，使得开发过程变得更加清晰，并为后续的系统扩展提供了更加灵活的架构设计。
+[riscv-software-src/riscv-isa-sim](https://github.com/riscv-software-src/riscv-isa-sim)
 
-如果说将面向对象特性引入C源代码中，那么需要使用更现代的C设计模式，如Linux不透明指针。
+[riscv-gnu-toolchain 百度网盘zip](https://pan.baidu.com/s/1Z9xKV_UY2Li_SxYrbJT5Zw?pwd=cpbf)

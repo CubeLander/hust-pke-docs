@@ -25,3 +25,8 @@
 - 修改process_t，增加`trapframe* ktrapframe;`
 - 修改alloc_process(), 将ktrapframe初始化为null
 - 在process.c中增加save_kernel_context和restore_kernel_context函数
+
+
+## 后记
+
+成熟的wait实现，是和内核的“异步信号量”共享一个出口的，我们只是利用了sem的队列而已。sem只是服务用户的。

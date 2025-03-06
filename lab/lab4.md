@@ -1,6 +1,13 @@
 # lab4 实验4：文件系统
 
 ## 文件系统概述
+
+[【精华】文件系统：一个自顶而下的理解方式（原创）](../doc/文件系统.md)
+
+[File System Implementation in RISC-V Proxy Kernel overview(Claude)](../doc/File_System_Overview.md)
+
+[VFS Layer Communication in PKE(Claude)](../doc/VFS_Layer_Communication_in_PKE.md)
+
 [文件系统如何工作(Deepseek)](../doc/文件系统的工作方式.md)
 
 [文件系统使用dentry和vinode的设计范式(Deepseek)](../doc/文件系统设计范式.md)
